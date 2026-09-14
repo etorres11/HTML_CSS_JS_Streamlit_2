@@ -11,72 +11,61 @@
 # ============================================================
 
 import streamlit as st
-# dedent elimina la sangría del texto multilínea para que HTML no se muestre como código.
-from textwrap import dedent
+# components permite insertar HTML/CSS/JavaScript en Streamlit.
+import streamlit.components.v1 as components
 
-st.set_page_config(page_title="HTML 2", page_icon="🛢️", layout="centered")
+st.set_page_config(page_title="JS 3", page_icon="🛢️", layout="centered")
 
-# st.markdown inserta contenido en la app. Con unsafe_allow_html=True puede renderizar HTML/CSS.
-st.markdown(dedent("""
+st.title("Halo dinámico con JavaScript")
+
+components.html("""
 <style>
-/* ==========================================================
-   GUÍA RÁPIDA DE CSS
-   ==========================================================
-   selector        = indica qué elemento queremos modificar.
-   background      = cambia el fondo.
-   color           = cambia el color del texto.
-   border          = crea un borde.
-   border-radius   = redondea las esquinas.
-   overflow:hidden = recorta lo que sobresale de la tarjeta.
-   clip-path       = fuerza la forma curva del contorno.
-   padding         = espacio DENTRO del elemento.
-   margin          = espacio FUERA del elemento.
-   box-shadow      = crea una sombra o brillo.
-   transition      = hace suave un cambio visual.
-   transform       = mueve, gira o escala un elemento.
-   :hover          = estilo usado cuando el cursor está encima.
-   ========================================================== */
-
-.stApp{background:#12304A;color:#F7FBFF;}
-h1,h2,h3,p,label{color:#F7FBFF !important;}
-.card{
-    border:2px solid rgba(32,230,199,.55);
-    border-radius:30px; overflow:hidden; clip-path: inset(0 round 30px);
-    padding:24px; background:#1B476B;
-    box-shadow:0 14px 36px rgba(4,18,29,.22);
-    transition:transform .22s ease, box-shadow .22s ease;
+/* --x y --y son variables CSS.
+   JavaScript cambiará sus valores según la posición del cursor.
+   radial-gradient usa esas coordenadas para dibujar el halo. */
+html,body{
+    margin:0; padding:10px; background:transparent; font-family:Arial,sans-serif;
 }
-.card:hover{transform:translateY(-4px); box-shadow:0 18px 44px rgba(32,230,199,.18);}
-.value{color:#20E6C7;font-weight:800;}
+.card{
+    --x:50%; --y:50%;
+    border:2px solid rgba(32,230,199,.65);
+    border-radius:32px; overflow:hidden; clip-path: inset(0 round 32px);
+    padding:30px;
+    background:
+        radial-gradient(circle at var(--x) var(--y), rgba(32,230,199,.32), rgba(27,71,107,0) 38%),
+        #1B476B;
+    color:#F7FBFF; box-shadow:0 16px 40px rgba(4,18,29,.26);
+}
+.card strong{color:#20E6C7;}
 </style>
-"""), unsafe_allow_html=True)
 
-st.markdown(dedent("""
-
-<!-- ========================================================
-     GUÍA RÁPIDA DE HTML
-     div   = caja o contenedor.
-     h1    = título principal.
-     h2/h3 = subtítulos.
-     p     = párrafo.
-     span  = permite aplicar estilo solo a una parte del texto.
-     class = conecta un elemento HTML con una regla CSS.
-     ======================================================== -->
-<div class="card">
-    <h1>Parámetros operacionales</h1>
-    <p>HTML también puede agrupar y ordenar los valores seleccionados en una tarjeta.</p>
+<div id="card" class="card">
+    <h2>Pozo productor</h2>
+    <p>Petróleo: <strong>1,450 BOPD</strong></p>
+    <p>Mueva el cursor dentro de la tarjeta.</p>
 </div>
-"""), unsafe_allow_html=True)
 
-oil_bopd = st.slider("Petróleo [BOPD]", 100, 5000, 1200, 50)
-water_bwpd = st.slider("Agua [BWPD]", 0, 5000, 600, 50)
-oil_price = st.number_input("Precio [USD/bbl]", 1.0, 200.0, 75.0, 1.0)
+<script>
+// Buscamos la tarjeta por su id.
+const card = document.getElementById("card");
 
-st.markdown(dedent(f"""
-<div class="card">
-    <h3>Parámetros activos</h3>
-    <p>Petróleo: <span class="value">{oil_bopd:,} BOPD</span></p>
-    <p>Agua: <span class="value">{water_bwpd:,} BWPD</span></p>
-    <p>Precio: <span class="value">${oil_price:.2f}/bbl</span></p>
-</div>
-"""), unsafe_allow_html=True)
+// mousemove se ejecuta continuamente mientras el cursor se mueve dentro de la tarjeta.
+card.addEventListener("mousemove", (event) => {
+    // getBoundingClientRect obtiene posición, ancho y alto reales de la tarjeta.
+    const rect = card.getBoundingClientRect();
+
+    // clientX = posición horizontal del cursor.
+    // Convertimos esa posición a porcentaje dentro de la tarjeta.
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+
+    // clientY = posición vertical del cursor.
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+    // setProperty cambia una variable CSS desde JavaScript.
+    card.style.setProperty("--x", x + "%");
+    card.style.setProperty("--y", y + "%");
+
+    // Como radial-gradient usa --x y --y, la luz parece seguir al mouse.
+});
+</script>
+""", height=245)
