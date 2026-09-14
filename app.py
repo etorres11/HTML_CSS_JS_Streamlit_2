@@ -10,35 +10,72 @@
 # el archivo pueda utilizarse directamente durante la clase.
 # ============================================================
 
-# Importamos Streamlit: convierte Python en una app web interactiva.
 import streamlit as st
+# dedent elimina la sangría del texto multilínea para que HTML no se muestre como código.
+from textwrap import dedent
 
-# Configura nombre de pestaña, icono y distribución de la página.
-st.set_page_config(page_title="Producción Oil & Gas", page_icon="🛢️", layout="centered")
+st.set_page_config(page_title="HTML 1", page_icon="🛢️", layout="centered")
 
-st.title("Panel básico de producción")
-st.write("Versión base con Streamlit puro, sin HTML ni JavaScript.")
+# st.markdown inserta contenido en la app. Con unsafe_allow_html=True puede renderizar HTML/CSS.
+st.markdown(dedent("""
+<style>
+/* ==========================================================
+   GUÍA RÁPIDA DE CSS
+   ==========================================================
+   selector        = indica qué elemento queremos modificar.
+   background      = cambia el fondo.
+   color           = cambia el color del texto.
+   border          = crea un borde.
+   border-radius   = redondea las esquinas.
+   overflow:hidden = recorta lo que sobresale de la tarjeta.
+   clip-path       = fuerza la forma curva del contorno.
+   padding         = espacio DENTRO del elemento.
+   margin          = espacio FUERA del elemento.
+   box-shadow      = crea una sombra o brillo.
+   transition      = hace suave un cambio visual.
+   transform       = mueve, gira o escala un elemento.
+   :hover          = estilo usado cuando el cursor está encima.
+   ========================================================== */
 
-# slider = barra deslizante para escoger un valor.
+.stApp{background:#12304A;color:#F7FBFF;}
+h1,h2,h3,p,label{color:#F7FBFF !important;}
+.hero-card{
+    border:2px solid rgba(32,230,199,.60);
+    border-radius:30px; overflow:hidden; clip-path: inset(0 round 30px);
+    padding:26px; background:#1B476B;
+    box-shadow:0 16px 38px rgba(4,18,29,.22);
+    transition:transform .22s ease, box-shadow .22s ease;
+}
+.hero-card:hover{transform:translateY(-4px); box-shadow:0 18px 42px rgba(32,230,199,.18);}
+.accent{color:#20E6C7;font-weight:800;}
+</style>
+"""), unsafe_allow_html=True)
+
+st.markdown(dedent("""
+
+<!-- ========================================================
+     GUÍA RÁPIDA DE HTML
+     div   = caja o contenedor.
+     h1    = título principal.
+     h2/h3 = subtítulos.
+     p     = párrafo.
+     span  = permite aplicar estilo solo a una parte del texto.
+     class = conecta un elemento HTML con una regla CSS.
+     ======================================================== -->
+<div class="hero-card">
+    <h1>Oil & Gas Production Dashboard</h1>
+    <p>
+        HTML permite estructurar un encabezado visualmente más limpio y profesional.
+        En este caso presentamos un panel educativo de
+        <span class="accent">producción</span>,
+        <span class="accent">Water Cut</span>
+        e
+        <span class="accent">ingreso bruto estimado</span>.
+    </p>
+</div>
+"""), unsafe_allow_html=True)
+
 oil_bopd = st.slider("Producción de petróleo [BOPD]", 100, 5000, 1200, 50)
-# Segundo slider: mismo componente, pero para agua.
 water_bwpd = st.slider("Producción de agua [BWPD]", 0, 5000, 600, 50)
-# number_input = campo para ingresar un valor numérico.
-oil_price = st.number_input("Precio estimado [USD/bbl]", 1.0, 200.0, 75.0, 1.0)
 
-# button = botón. El bloque interno se ejecuta solo al presionarlo.
-if st.button("Calcular indicadores", type="primary"):
-    # Fluido total = petróleo + agua.
-    total_fluid = oil_bopd + water_bwpd
-    # Water Cut = porcentaje de agua respecto al fluido total.
-    water_cut = water_bwpd / total_fluid * 100 if total_fluid else 0
-    # Producción mensual aproximada = producción diaria x 30 días.
-    monthly_oil = oil_bopd * 30
-    # Ingreso bruto estimado = barriles mensuales x precio.
-    gross_revenue = monthly_oil * oil_price
-
-    # columns divide la pantalla en tres bloques horizontales.
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Fluido total", f"{total_fluid:,.0f} BFPD")
-    c2.metric("Water Cut", f"{water_cut:.1f}%")
-    c3.metric("Ingreso mensual", f"${gross_revenue:,.0f}")
+st.info("Aquí HTML estructura el bloque principal. No se muestra código HTML en pantalla.")
